@@ -42,7 +42,7 @@
             location.href = "/myPage";
         }
         const getboards = () => {
-            axios.post('http://localhost:8787/board/my')
+            axios.post('http://158.180.66.250:8787/board/my')
                 .then(function(response) {
                   response.data.forEach((data,idx) => {
 					  drawBoards(data.no, data.userid, data.board);
@@ -74,7 +74,7 @@
 			}
         }
         const myinfo = () => {
-            axios.post('http://localhost:8787/user/myname')
+            axios.post('http://158.180.66.250:8787/user/myname')
                 .then(function(response) {
 					console.log("res");
 					console.log(response.data);
@@ -87,7 +87,7 @@
                 });
         }
         const logout = () => {
-            axios.post('http://localhost:8787/logout')
+            axios.post('http://158.180.66.250:8787/logout')
                 .then(function(response) {
 					alert("logout success");
 					location.href = "/";

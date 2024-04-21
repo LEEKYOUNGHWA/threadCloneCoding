@@ -51,7 +51,7 @@
             location.href = "/myPage";
         }
         const getboards = () => {
-            axios.post('http://localhost:8787/user/myname',null,{})
+            axios.post('http://158.180.66.250:8787/user/myname',null,{})
                 .then(function(response) {
                   console.log(response);
                 })
@@ -64,7 +64,7 @@
             var password = document.getElementById("password").value;
                 
             var user = {userid : username, password : password};
-            axios.post('http://localhost:8787/user/login',
+            axios.post('http://158.180.66.250:8787/user/login',
 	            JSON.stringify(user),
 	            {headers:{'Content-Type' : 'application/json'}}
             	).then(function(response) {
@@ -81,7 +81,7 @@
 			var username = document.getElementById("username").value; 
             var password = document.getElementById("password").value;
             var user = {userid : username, password : password};
-            axios.post('http://localhost:8787/user/join',
+            axios.post('http://158.180.66.250:8787/user/join',
 	            JSON.stringify(user),
 	            {headers:{'Content-Type' : 'application/json'}}
             	).then(function(response) {

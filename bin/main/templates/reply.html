@@ -63,7 +63,7 @@
         const loadedit = async () => {
 			
 			try{
-				const res = await axios.post('http://localhost:8787/user/myname');
+				const res = await axios.post('http://158.180.66.250:8787/user/myname');
 				console.log(res.data);
 				myinfoid=res.data;
             } catch (error) {
@@ -74,7 +74,7 @@
 			var boardno = document.getElementById('boardno').innerText;
 			if(!boardno) return false;
 			var board = {no : boardno};
-            await axios.get('http://localhost:8787/board/board',
+            await axios.get('http://158.180.66.250:8787/board/board',
             {
 				params: {board : boardno},
 				headers:{'Content-Type' : 'application/json'}
@@ -99,7 +99,7 @@
 			var boardno = document.getElementById('boardno').innerText;
 			if(!boardno) return false;
 			var board = {no : boardno};
-            axios.get('http://localhost:8787/reply/load',
+            axios.get('http://158.180.66.250:8787/reply/load',
             	{
 					params: {board : boardno},
 					headers:{'Content-Type' : 'application/json'}
@@ -137,7 +137,7 @@
 			if (myinfoid == userid ){
 				if ( confirm("delete?")) {
 					var reply = {replyno : no};
-					axios.post('http://localhost:8787/reply/delete',
+					axios.post('http://158.180.66.250:8787/reply/delete',
 		            JSON.stringify(reply),
 		            {headers:{'Content-Type' : 'application/json'}}
 	            	).then(function(response) {
@@ -159,7 +159,7 @@
 			var boardno = document.getElementById('boardno').innerText;
 			var boardtext = document.getElementById('replytextarea').value;
             var reply = {boardno : boardno , reply : boardtext};
-            axios.post('http://localhost:8787/reply',
+            axios.post('http://158.180.66.250:8787/reply',
 	            JSON.stringify(reply),
 	            {headers:{'Content-Type' : 'application/json'}}
             	).then(function(response) {

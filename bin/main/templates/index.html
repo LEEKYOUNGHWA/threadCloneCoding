@@ -59,7 +59,7 @@
 			isFetching = true;
 			console.log("fetch"+currentPage);
 			
-			axios.get(`http://localhost:8787/board?page=${currentPage}&size=10`)
+			axios.get(`http://158.180.66.250:8787/board?page=${currentPage}&size=10`)
                 .then(function(response) {
 					console.log(response.data);
 					
@@ -91,7 +91,7 @@
             location.href = "/myPage";
         }
         const getboards = () => {
-            axios.get(`http://localhost:8787/board?page=${currentPage}&size=10`)
+            axios.get(`http://158.180.66.250:8787/board?page=${currentPage}&size=10`)
                 .then(function(response) {
 					console.log(response.data);
                   response.data.forEach((data,idx) => {
@@ -123,7 +123,7 @@
         }
 		const myinfo = () => {
 			if (!getCookie("token")) return false;
-            axios.post('http://localhost:8787/user/myname')
+            axios.post('http://158.180.66.250:8787/user/myname')
                 .then(function(response) {
 					console.log(response.data);
 					document.getElementById("myinfo").innerHTML=response.data + "님 환영합니다! ";

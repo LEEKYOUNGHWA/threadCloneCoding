@@ -56,7 +56,7 @@
 			var boardno = document.getElementById('boardno').innerText;
 			var boardtext = document.getElementById('boardcontent').value;
             var board = {no : boardno , board : boardtext};
-            axios.post('http://localhost:8787/board',
+            axios.post('http://158.180.66.250:8787/board',
 	            JSON.stringify(board),
 	            {headers:{'Content-Type' : 'application/json'}}
             	).then(function(response) {
@@ -73,7 +73,7 @@
 			console.log("dodelete");
 			var boardno = document.getElementById('boardno').innerText;
             var board = {no : boardno};
-            axios.post('http://localhost:8787/board/delete',
+            axios.post('http://158.180.66.250:8787/board/delete',
 	            JSON.stringify(board),
 	            {headers:{'Content-Type' : 'application/json'}}
             	).then(function(response) {
@@ -90,7 +90,7 @@
 			var boardno = document.getElementById('boardno').innerText;
 			if(!boardno) return false;
 			var board = {no : boardno};
-            axios.post('http://localhost:8787/board/loadedit',
+            axios.post('http://158.180.66.250:8787/board/loadedit',
             	JSON.stringify(board),
             	{headers:{'Content-Type' : 'application/json'}})
                 .then(function(response) {
