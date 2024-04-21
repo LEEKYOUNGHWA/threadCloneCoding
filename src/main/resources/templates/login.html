@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Thread</title>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
-    <script th:src="@{/assets/js/libs/axios.min.js}"></script>
 </th:block>
 <body>
     <header>
@@ -50,49 +49,49 @@
         const goMypage = () => {
             location.href = "/myPage";
         }
-        const getboards = () => {
-            axios.post('http://158.180.66.250:8787/user/myname',null,{})
-                .then(function(response) {
-                  console.log(response);
-                })
-                .catch(function(error) {
-                  console.log("error" + error);
-                });
-        }
         const dologin = () => {
 			var username = document.getElementById("username").value; 
             var password = document.getElementById("password").value;
                 
             var user = {userid : username, password : password};
-            axios.post('http://158.180.66.250:8787/user/login',
-	            JSON.stringify(user),
-	            {headers:{'Content-Type' : 'application/json'}}
-            	).then(function(response) {
-					console.log(response);
-					alert("로그인성공!");
+            	
+        	fetch("http://158.180.66.250:8787/user/login", {
+			  method: "POST",
+			  headers: {
+			    "Content-Type": "application/json",
+			  },
+			  body: JSON.stringify(user),
+			}).then((response) => response.json())
+  			.then((data) => {
+				console.log(data);
+				if(data.message == 'Success') {
+					alert("로그인 성공");
 					location.href = "/";
-                })
-                .catch(function(error) {
-                  console.log(error);
-                  alert(error.response.data.message);
-                });
+				}else {
+                  alert(data.message);
+				}
+  			});
         }
         const dojoin = () => {
 			var username = document.getElementById("username").value; 
             var password = document.getElementById("password").value;
             var user = {userid : username, password : password};
-            axios.post('http://158.180.66.250:8787/user/join',
-	            JSON.stringify(user),
-	            {headers:{'Content-Type' : 'application/json'}}
-            	).then(function(response) {
-					console.log(response);
+            fetch("http://158.180.66.250:8787/user/join", {
+			  method: "POST",
+			  headers: {
+			    "Content-Type": "application/json",
+			  },
+			  body: JSON.stringify(user),
+			}).then((response) => response.json())
+  			.then((data) => {
+				console.log(data);
+				if(data.message == 'Success') {
 					alert("가입완료");
 					location.href = "/";
-                })
-                .catch(function(error) {
-                  console.log(error);
-                  alert(error.response.data.message);
-                });
+				}else {
+                  alert(data.message);
+				}
+  			});
         }
     </script>
 </body>

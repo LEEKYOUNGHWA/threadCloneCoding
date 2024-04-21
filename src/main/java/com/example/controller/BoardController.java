@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.model.Board;
+import com.example.model.Message;
 import com.example.service.BoardService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -41,19 +42,23 @@ public class BoardController {
 	
 	@Operation(summary = "모든 게시글 조회", description = "모든 회원 정보를 조회 합니다.")
 	@GetMapping()
-	public ResponseEntity<List<Board>> getAllMembers(Pageable pageable) {
-		return new ResponseEntity<>(boardService.findAllByOrderByNoDesc(pageable), HttpStatus.OK);
+	public ResponseEntity<Object> getAllMembers(Pageable pageable) {
+		Message message = new Message();
+		message.setData(boardService.findAllByOrderByNoDesc(pageable));
+		return new ResponseEntity<Object>(message, HttpStatus.OK);
 	}
 
 	@Operation(summary = "게시글 작성", description = "게시글 작성하여 저장합니다.")
 	@PostMapping()
 	public ResponseEntity<Object> insertBoard(@Parameter(name = "board", description = "보드 정보", in = ParameterIn.PATH) @RequestBody Board board
 			, @AuthenticationPrincipal Authentication auth) {
+		Message message = new Message();
 		try {
 			boardService.insertBoard(board,auth);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(message, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST); 
+			message.setMessage(e.getMessage());
+			return new ResponseEntity<Object>(message, HttpStatus.BAD_REQUEST); 
 		}
 	}
 	
@@ -62,11 +67,13 @@ public class BoardController {
 	public ResponseEntity<Object> deleteBoard(
 			@RequestBody Board board,
 			@AuthenticationPrincipal Authentication auth) {
+		Message message = new Message();
 		try {
 			boardService.deleteBoard(board, auth);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(message, HttpStatus.OK);
 		} catch (Exception e){
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST); 
+			message.setMessage(e.getMessage());
+			return new ResponseEntity<Object>(message, HttpStatus.BAD_REQUEST); 
 		}
 	}
 	
@@ -81,22 +88,28 @@ public class BoardController {
 	public ResponseEntity<Object> loadedit(
 			@Parameter(name = "board", description = "보드 정보", in = ParameterIn.PATH) @RequestBody Board board,
 			@AuthenticationPrincipal Authentication auth) {
+		Message message = new Message();
 		try {
 			Board resboard = boardService.findByUseridAndNo(board,auth);
-			return new ResponseEntity<Object>(resboard, HttpStatus.OK);
+			message.setData(resboard);
+			return new ResponseEntity<Object>(message, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST); 
+			message.setMessage(e.getMessage());
+			return new ResponseEntity<Object>(message, HttpStatus.BAD_REQUEST); 
 		}
 	}
 	@Operation(summary = "게시글 정보 가져오기", description = "게시글 조회합니다")
 	@GetMapping(value ="/board")
 	public ResponseEntity<Object> loadboard(
 			@Parameter(name = "board", description = "보드 정보")@RequestParam Integer board) {
+		Message message = new Message();
 		try {
 			Board resboard = boardService.findByNo(board);
-			return new ResponseEntity<Object>(resboard, HttpStatus.OK);
+			message.setData(resboard);
+			return new ResponseEntity<Object>(message, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			message.setMessage(e.getMessage());
+			return new ResponseEntity<Object>(message, HttpStatus.BAD_REQUEST);
 		}
 	}
 }

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Thread</title>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
-    <script th:src="@{/assets/js/libs/axios.min.js}"></script>
 </th:block>
 <body>
     <header>
@@ -62,19 +61,45 @@
         }
         const loadedit = async () => {
 			
-			try{
+			/*try{
 				const res = await axios.post('http://158.180.66.250:8787/user/myname');
 				console.log(res.data);
 				myinfoid=res.data;
             } catch (error) {
 				alert(error.response.data.message);
                 console.log(error);
-			};
+			};*/
+			
+			await fetch("http://158.180.66.250:8787/user/myname", {
+			  method: "POST",
+			  headers: {
+			    "Content-Type": "application/json",
+			  },
+			  body: JSON.stringify(board),
+			}).then((response) => response.json())
+  			.then((data) => {
+				  console.log(data);
+				myinfoid=data.message;
+  			});
 
 			var boardno = document.getElementById('boardno').innerText;
 			if(!boardno) return false;
 			var board = {no : boardno};
-            await axios.get('http://158.180.66.250:8787/board/board',
+            
+            await fetch(`http://158.180.66.250:8787/board/board?board=${boardno}`)
+            .then((response) => response.json())
+  			.then((data) => {
+				console.log(data);
+				if(data.message == 'Success') {
+					document.getElementById('boardcontent').innerText = data.data.board;
+					if (data.userid == myinfoid){
+						document.getElementById('editbutton').disabled = false;
+					}
+				}else {
+                  alert(data.message);
+				}
+  			});
+            /*await axios.get('http://158.180.66.250:8787/board/board',
             {
 				params: {board : boardno},
 				headers:{'Content-Type' : 'application/json'}
@@ -90,16 +115,16 @@
                   console.log(error);
                   alert(error.response);
                   location.href = "/";
-                });
+                });*/
         }
         
         
         
-        const loadreply = () => {
+        const loadreply = async () => {
 			var boardno = document.getElementById('boardno').innerText;
 			if(!boardno) return false;
 			var board = {no : boardno};
-            axios.get('http://158.180.66.250:8787/reply/load',
+           /* axios.get('http://158.180.66.250:8787/reply/load',
             	{
 					params: {board : boardno},
 					headers:{'Content-Type' : 'application/json'}
@@ -115,7 +140,22 @@
                 .catch(function(error) {
                   console.log(error);
                   alert(error.response);
-                });
+                });*/
+                
+              await fetch(`http://158.180.66.250:8787/reply/load?board=${boardno}`)
+            .then((response) => response.json())
+  			.then((data) => {
+				console.log(data);
+				if(data.message == 'Success') {
+					console.log(data.data);
+                  	data.data.forEach((data,idx) => {
+					  console.log(data);
+					  drawBoards(data.replyno, data.userid, data.reply);   
+				  });
+				}else {
+                  alert(data.message);
+				}
+  			});
         }
         const drawBoards = (no, userid, board) => {
 			let divBoardwrapper = document.createElement("div");
@@ -137,7 +177,7 @@
 			if (myinfoid == userid ){
 				if ( confirm("delete?")) {
 					var reply = {replyno : no};
-					axios.post('http://158.180.66.250:8787/reply/delete',
+					/*axios.post('http://158.180.66.250:8787/reply/delete',
 		            JSON.stringify(reply),
 		            {headers:{'Content-Type' : 'application/json'}}
 	            	).then(function(response) {
@@ -148,7 +188,21 @@
 	                .catch(function(error) {
 	                  console.log(error);
 	                  alert(error.response.data.message);
-	                });
+	                });*/
+	                fetch("http://158.180.66.250:8787/reply/delete", {
+					  method: "POST",
+					  headers: {
+					    "Content-Type": "application/json",
+					  },
+					  body: JSON.stringify(reply),
+					}).then((response) => response.json())
+		  				.then((data) => {
+						  if(data.message == "Success"){
+							  alert("삭제완료");
+							  location.reload();
+						  }
+						  }
+  			);
                 }
 			}
 			//location.href = "/reply/" + no;
@@ -159,7 +213,22 @@
 			var boardno = document.getElementById('boardno').innerText;
 			var boardtext = document.getElementById('replytextarea').value;
             var reply = {boardno : boardno , reply : boardtext};
-            axios.post('http://158.180.66.250:8787/reply',
+            fetch("http://158.180.66.250:8787/reply", {
+			  method: "POST",
+			  headers: {
+			    "Content-Type": "application/json",
+			  },
+			  body: JSON.stringify(reply),
+			}).then((response) => response.json())
+  				.then((data) => {
+				  if(data.message == "Success"){
+					  alert("작성완료");
+					  location.reload();
+				  }
+				  }
+  			);
+            
+            /*axios.post('http://158.180.66.250:8787/reply',
 	            JSON.stringify(reply),
 	            {headers:{'Content-Type' : 'application/json'}}
             	).then(function(response) {
@@ -171,7 +240,7 @@
                 .catch(function(error) {
                   console.log(error);
                   alert(error.response.data.message);
-                });
+                });*/
         }
     </script>
 </body>

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Thread</title>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
-    <script th:src="@{/assets/js/libs/axios.min.js}"></script>
 </th:block>
 <body>
     <header>
@@ -42,7 +41,7 @@
             location.href = "/myPage";
         }
         const getboards = () => {
-            axios.post('http://158.180.66.250:8787/board/my')
+           /* axios.post('http://158.180.66.250:8787/board/my')
                 .then(function(response) {
                   response.data.forEach((data,idx) => {
 					  drawBoards(data.no, data.userid, data.board);
@@ -52,6 +51,20 @@
 				  alert(error.data.message);
                   console.log(error.data.message);
                 });
+                */
+          fetch("http://158.180.66.250:8787/board/my", {
+			  method: "POST",
+			  headers: {
+			    "Content-Type": "application/json",
+			  },
+			  body: JSON.stringify(),
+			}).then((response) => response.json())
+  			.then((data) => {
+				  console.log(data);
+				data.forEach((data,idx) => {
+					  drawBoards(data.no, data.userid, data.board);
+				  });
+  			});
         }
         const drawBoards = (no, userid, board) => {
 			let divBoardwrapper = document.createElement("div");
@@ -74,7 +87,7 @@
 			}
         }
         const myinfo = () => {
-            axios.post('http://158.180.66.250:8787/user/myname')
+            /*axios.post('http://158.180.66.250:8787/user/myname')
                 .then(function(response) {
 					console.log("res");
 					console.log(response.data);
@@ -84,18 +97,32 @@
 					alert(error.response.data.message);
                  	console.log(error);
                  	location.href = "/";
-                });
+                });*/
+                
+           fetch("http://158.180.66.250:8787/user/myname", {
+			  method: "POST",
+			  headers: {
+			    "Content-Type": "application/json",
+			  },
+			  body: JSON.stringify(),
+			}).then((response) => response.json())
+  			.then((data) => {
+				 console.log(data);
+				document.getElementById("myinfo").innerHTML=data.message + "님 마이페이지.      로그아웃";
+  			});
         }
-        const logout = () => {
-            axios.post('http://158.180.66.250:8787/logout')
-                .then(function(response) {
-					alert("logout success");
-					location.href = "/";
-                })
-                .catch(function(error) {
-				  console.log("err");
-                  console.log(error);
-                });
+        const logout = () => {   
+           fetch("http://158.180.66.250:8787/logout", {
+			  method: "POST",
+			  headers: {
+			    "Content-Type": "application/json",
+			  },
+			  body: JSON.stringify(),
+			}).then((response) => response.json())
+  			.then((data) => {
+				alert("logout success");
+				location.href = "/";
+  			});
         }
     </script>
 </body>

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.model.Message;
 import com.example.model.Reply;
 import com.example.service.ReplyService;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -44,11 +45,13 @@ public class ReplyController {
 			@Parameter(name = "reply", description = "답글 정보", in = ParameterIn.PATH) 
 			@RequestBody Reply reply
 			, @AuthenticationPrincipal Authentication auth) {
+		Message message = new Message();
 		try {
 			replyService.insertReply(reply,auth);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(message,HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST); 
+			message.setMessage(e.getMessage());
+			return new ResponseEntity<Object>(message, HttpStatus.BAD_REQUEST); 
 		}
 	}
 	
@@ -58,11 +61,13 @@ public class ReplyController {
 			@Parameter(name = "reply", description = "답글 정보") 
 			@RequestBody Reply reply,
 			@AuthenticationPrincipal Authentication auth) {
+		Message message = new Message();
 		try {
 			replyService.deleteReply(reply, auth);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(message, HttpStatus.OK);
 		} catch (Exception e){
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST); 
+			message.setMessage(e.getMessage());
+			return new ResponseEntity<Object>(message, HttpStatus.BAD_REQUEST); 
 		}
 	}
 
@@ -71,11 +76,14 @@ public class ReplyController {
 	public ResponseEntity<Object> loadedit(
 			@Parameter(name = "reply", description = "답글 정보", in = ParameterIn.PATH) 
 			@RequestParam Integer board) {
+		Message message = new Message();
 		try {
 			List<Reply> resreply = replyService.findByBoardnoOrderByReplynoDesc(board);
-			return new ResponseEntity<Object>(resreply, HttpStatus.OK);
+			message.setData(resreply);
+			return new ResponseEntity<Object>(message, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.BAD_REQUEST); 
+			message.setMessage(e.getMessage());
+			return new ResponseEntity<Object>(message, HttpStatus.BAD_REQUEST); 
 		}
 	}
 }

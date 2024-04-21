@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block th:fragment="commonHead">
+<head>
     <meta charset="UTF-8">
     <title>Thread</title>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
-    <script th:src="@{/assets/js/libs/axios.min.js}"></script>
-</th:block>
+</head>
 <body>
     <header>
 		<div id='header' onclick="goHome();">@</div>
@@ -20,7 +19,6 @@
 			<img th:src="@{/images/mypage.png}" onclick="goMypage();"></img>
 		</div>
 	</div>
-    
     <script>
 		window.onload = () => {
 			myinfo();
@@ -59,22 +57,19 @@
 			isFetching = true;
 			console.log("fetch"+currentPage);
 			
-			axios.get(`http://158.180.66.250:8787/board?page=${currentPage}&size=10`)
-                .then(function(response) {
-					console.log(response.data);
-					
-				    if (response.data.length === 0) {
+			fetch(`http://158.180.66.250:8787/board?page=${currentPage}&size=10`)
+                .then((response) => response.json())
+  				.then((data) => {
+					console.log(data);
+					if (data.data.length === 0) {
 				        hasMore = false;
 				        return;
-				    }
-
-                  response.data.forEach((data,idx) => {
-					  drawBoards(data.no, data.userid, data.board);  
+				    }else {
+						data.data.forEach((data,idx) => {
+					 	drawBoards(data.no, data.userid, data.board);  
+				 		});
+					}
 				  });
-                })
-                .catch(function(error) {
-                  console.log(error);
-                });
                 
 			isFetching = false;
 			currentPage++;
@@ -91,16 +86,14 @@
             location.href = "/myPage";
         }
         const getboards = () => {
-            axios.get(`http://158.180.66.250:8787/board?page=${currentPage}&size=10`)
-                .then(function(response) {
-					console.log(response.data);
-                  response.data.forEach((data,idx) => {
-					  drawBoards(data.no, data.userid, data.board);  
+            fetch(`http://158.180.66.250:8787/board?page=${currentPage}&size=10`)
+                .then((response) => response.json())
+  				.then((data) => {
+					console.log(data);
+  					data.data.forEach((data,idx) => {
+						drawBoards(data.no, data.userid, data.board);  
 				  });
-                })
-                .catch(function(error) {
-                  console.log(error);
-                });
+  			});
                 currentPage++;
         }
         const drawBoards = (no, userid, board) => {
@@ -123,14 +116,17 @@
         }
 		const myinfo = () => {
 			if (!getCookie("token")) return false;
-            axios.post('http://158.180.66.250:8787/user/myname')
-                .then(function(response) {
-					console.log(response.data);
-					document.getElementById("myinfo").innerHTML=response.data + "님 환영합니다! ";
-                })
-                .catch(function(error) {
-                  console.log(error);
-                });
+			fetch("http://158.180.66.250:8787/user/myname", {
+			  method: "POST",
+			  headers: {
+			    "Content-Type": "application/json",
+			  },
+			  body: JSON.stringify({
+			  }),
+			}).then((response) => response.json())
+  			.then((data) => {console.log(data);
+  			document.getElementById("myinfo").innerHTML=data.message + "님 환영합니다! ";
+  			});
         }
         function getCookie(cookieName){
 		    var cookieValue=null;

@@ -65,8 +65,10 @@ public class UserController {
 	
 	@Operation(summary = "내 정보 조회", description = "내 정보를 조회 합니다.")
 	@PostMapping(value = "/myname")
-	public String getmyname(@AuthenticationPrincipal Authentication auth) { //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return auth.getName();
+	public ResponseEntity<Object> getmyname(@AuthenticationPrincipal Authentication auth) { //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		Message message = new Message();
+		message.setMessage(auth.getName());
+		return new ResponseEntity<Object>(message, HttpStatus.OK);
 	}
 	
 	@Operation(summary = "회원가입", description = "회원가입 합니다.")
