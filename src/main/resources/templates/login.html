@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<th:block th:fragment="commonHead">
     <meta charset="UTF-8">
     <title>Thread</title>
     <link th:href="@{/css/index.css}" rel="stylesheet"/>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-</head>
+    <script th:src="@{/assets/js/libs/axios.min.js}"></script>
+</th:block>
 <body>
     <header>
 		<div id='header' onclick="goHome();">@</div>
