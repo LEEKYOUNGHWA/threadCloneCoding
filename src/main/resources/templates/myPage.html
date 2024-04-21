@@ -41,7 +41,7 @@
             location.href = "/myPage";
         }
         const getboards = () => {
-           /* axios.post('http://158.180.66.250:8787/board/my')
+           /* axios.post('http://158.180.66.250/board/my')
                 .then(function(response) {
                   response.data.forEach((data,idx) => {
 					  drawBoards(data.no, data.userid, data.board);
@@ -52,7 +52,7 @@
                   console.log(error.data.message);
                 });
                 */
-          fetch("http://158.180.66.250:8787/board/my", {
+          fetch("http://158.180.66.250/board/my", {
 			  method: "POST",
 			  headers: {
 			    "Content-Type": "application/json",
@@ -87,7 +87,7 @@
 			}
         }
         const myinfo = () => {
-            /*axios.post('http://158.180.66.250:8787/user/myname')
+            /*axios.post('http://158.180.66.250/user/myname')
                 .then(function(response) {
 					console.log("res");
 					console.log(response.data);
@@ -99,7 +99,7 @@
                  	location.href = "/";
                 });*/
                 
-           fetch("http://158.180.66.250:8787/user/myname", {
+           fetch("http://158.180.66.250/user/myname", {
 			  method: "POST",
 			  headers: {
 			    "Content-Type": "application/json",
@@ -112,7 +112,7 @@
   			});
         }
         const logout = () => {   
-           fetch("http://158.180.66.250:8787/logout", {
+           fetch("http://158.180.66.250/logout", {
 			  method: "POST",
 			  headers: {
 			    "Content-Type": "application/json",

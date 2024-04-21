@@ -57,7 +57,7 @@
 			isFetching = true;
 			console.log("fetch"+currentPage);
 			
-			fetch(`http://158.180.66.250:8787/board?page=${currentPage}&size=10`)
+			fetch(`http://158.180.66.250/board?page=${currentPage}&size=10`)
                 .then((response) => response.json())
   				.then((data) => {
 					console.log(data);
@@ -86,7 +86,7 @@
             location.href = "/myPage";
         }
         const getboards = () => {
-            fetch(`http://158.180.66.250:8787/board?page=${currentPage}&size=10`)
+            fetch(`http://158.180.66.250/board?page=${currentPage}&size=10`)
                 .then((response) => response.json())
   				.then((data) => {
 					console.log(data);
@@ -116,7 +116,7 @@
         }
 		const myinfo = () => {
 			if (!getCookie("token")) return false;
-			fetch("http://158.180.66.250:8787/user/myname", {
+			fetch("http://158.180.66.250/user/myname", {
 			  method: "POST",
 			  headers: {
 			    "Content-Type": "application/json",

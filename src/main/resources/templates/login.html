@@ -55,7 +55,7 @@
                 
             var user = {userid : username, password : password};
             	
-        	fetch("http://158.180.66.250:8787/user/login", {
+        	fetch("http://158.180.66.250/user/login", {
 			  method: "POST",
 			  headers: {
 			    "Content-Type": "application/json",
@@ -76,7 +76,7 @@
 			var username = document.getElementById("username").value; 
             var password = document.getElementById("password").value;
             var user = {userid : username, password : password};
-            fetch("http://158.180.66.250:8787/user/join", {
+            fetch("http://158.180.66.250/user/join", {
 			  method: "POST",
 			  headers: {
 			    "Content-Type": "application/json",
