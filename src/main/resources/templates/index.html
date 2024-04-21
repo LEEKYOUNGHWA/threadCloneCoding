@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thread</title>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header>
+		<div id='header' onclick="goHome();">@</div>
+	</header>	
+	<div id='boards'>
+		<div id='myinfo'>익명의 사용자</div>
+	</div>
+	<div id="footer">
+		<div id="footercontent">
+			<img th:src="@{/images/home.png}" onclick="goHome();"></img>
+			<img th:src="@{/images/write.png}" onclick="goWrite();"></img>
+			<img th:src="@{/images/mypage.png}" onclick="goMypage();"></img>
+		</div>
+	</div>
+    
+    <script>
+		window.onload = () => {
+			myinfo();
+			getboards();
+		}
+		
+		let currentPage = 0;
+		let isFetching = false;
+		let hasMore = true;
+		let preScrollTop = 0;
+		let root = document.getElementById('root');
+
+		window.addEventListener('scroll', () => {
+		    if (isFetching || !hasMore) {
+		        return
+		    }
+		
+			let nextScrollTop = window.scrollY;
+		  
+			if(preScrollTop < nextScrollTop) {
+		      console.log('Down!');
+		    }
+			else { // (preScrollTop > nextScrollTop)
+		      console.log('Up!');
+		      return
+		    }
+			preScrollTop = nextScrollTop;
+			
+		    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+		        fetchData();
+		        return;
+		    }
+		});
+		
+		async function fetchData() {
+			isFetching = true;
+			console.log("fetch"+currentPage);
+			
+			axios.get(`http://localhost:8787/board?page=${currentPage}&size=10`)
+                .then(function(response) {
+					console.log(response.data);
+					
+				    if (response.data.length === 0) {
+				        hasMore = false;
+				        return;
+				    }
+
+                  response.data.forEach((data,idx) => {
+					  drawBoards(data.no, data.userid, data.board);  
+				  });
+                })
+                .catch(function(error) {
+                  console.log(error);
+                });
+                
+			isFetching = false;
+			currentPage++;
+		}
+        //게시글 쓰기 페이지로 이동
+        const goHome = () => {
+            location.href = "/";
+        }
+        //게시글 수정 페이지로 이동
+        const goWrite = () => {
+            location.href = "/write";
+        }
+        const goMypage = () => {
+            location.href = "/myPage";
+        }
+        const getboards = () => {
+            axios.get(`http://localhost:8787/board?page=${currentPage}&size=10`)
+                .then(function(response) {
+					console.log(response.data);
+                  response.data.forEach((data,idx) => {
+					  drawBoards(data.no, data.userid, data.board);  
+				  });
+                })
+                .catch(function(error) {
+                  console.log(error);
+                });
+                currentPage++;
+        }
+        const drawBoards = (no, userid, board) => {
+			let divBoardwrapper = document.createElement("div");
+			divBoardwrapper.setAttribute("class","board");
+			let divuserid = document.createElement("div");
+			divuserid.setAttribute("class","id");
+			divuserid.innerText = userid;
+			let divboard = document.createElement("div");
+			divboard.setAttribute("class","content");
+			divboard.setAttribute("onclick","editable(" + no + ",'"+ userid + "')");
+			divboard.innerText = board;
+			divBoardwrapper.append(divuserid);
+			divBoardwrapper.append(divboard);
+			document.getElementById("boards").append(divBoardwrapper);
+		}
+		
+		const editable = (no, userid) => {
+			location.href = "/reply/" + no;
+        }
+		const myinfo = () => {
+			if (!getCookie("token")) return false;
+            axios.post('http://localhost:8787/user/myname')
+                .then(function(response) {
+					console.log(response.data);
+					document.getElementById("myinfo").innerHTML=response.data + "님 환영합니다! ";
+                })
+                .catch(function(error) {
+                  console.log(error);
+                });
+        }
+        function getCookie(cookieName){
+		    var cookieValue=null;
+		    if(document.cookie){
+		        var array=document.cookie.split((escape(cookieName)+'='));
+		        if(array.length >= 2){
+		            var arraySub=array[1].split(';');
+		            cookieValue=unescape(arraySub[0]);
+		        }
+		    }
+    return cookieValue;
+}
+
+    </script>
+</body>
+</html>

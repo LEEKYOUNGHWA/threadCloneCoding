@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thread</title>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header>
+		<div id='header' onclick="goHome();">@</div>
+	</header>
+	<div id='boards'>
+		<div id='boardno' th:text="__${boardno}__"></div>
+		<textarea id="boardcontent" name="textarea" rows="5" cols="50" maxlength="100" placeholder="1자이상입력하세요"></textarea>
+		<button id="postbutton" onclick="dopost()">post</button>
+		<button id="deletebutton" onclick="dodelete()">delete</button>
+	</div>
+	<div id="footer">
+		<div id="footercontent">
+			<img th:src="@{/images/home.png}" onclick="goHome();"></img>
+			<img th:src="@{/images/write.png}" onclick="goWrite();"></img>
+			<img th:src="@{/images/mypage.png}" onclick="goMypage();"></img>
+		</div>
+	</div>
+    
+    <script>
+		window.onload = () => {
+			document.getElementById('postbutton').disabled = true;
+			document.getElementById('deletebutton').style.visibility ='hidden';
+			document.getElementById('boardcontent').addEventListener('keyup', function (e){
+    			console.log(document.getElementById('boardcontent').value);
+    			var textlen = document.getElementById('boardcontent').value.length;
+    			if (textlen > 0) {
+					document.getElementById('postbutton').disabled = false;
+				} else {
+					document.getElementById('postbutton').disabled = true;
+				}
+			}, false);
+			
+			loadedit();
+		}
+        //게시글 쓰기 페이지로 이동
+        const goHome = () => {
+            location.href = "/";
+        }
+        //게시글 수정 페이지로 이동
+        const goWrite = () => {
+            location.href = "/write";
+        }
+        const goMypage = () => {
+            location.href = "/myPage";
+        }
+        const dopost = () => {
+			console.log("dopost");
+			var boardno = document.getElementById('boardno').innerText;
+			var boardtext = document.getElementById('boardcontent').value;
+            var board = {no : boardno , board : boardtext};
+            axios.post('http://localhost:8787/board',
+	            JSON.stringify(board),
+	            {headers:{'Content-Type' : 'application/json'}}
+            	).then(function(response) {
+					console.log(response);
+					alert("작성완료");
+					location.href = "/myPage";
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  alert(error.response.data.message);
+                });
+        }
+        const dodelete = () => {
+			console.log("dodelete");
+			var boardno = document.getElementById('boardno').innerText;
+            var board = {no : boardno};
+            axios.post('http://localhost:8787/board/delete',
+	            JSON.stringify(board),
+	            {headers:{'Content-Type' : 'application/json'}}
+            	).then(function(response) {
+					console.log(response);
+					alert("게시글 삭제 완료");
+					location.href = "/myPage";
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  alert(error);
+                });
+        }
+        const loadedit = () => {
+			var boardno = document.getElementById('boardno').innerText;
+			if(!boardno) return false;
+			var board = {no : boardno};
+            axios.post('http://localhost:8787/board/loadedit',
+            	JSON.stringify(board),
+            	{headers:{'Content-Type' : 'application/json'}})
+                .then(function(response) {
+					console.log(response);
+					document.getElementById('boardcontent').innerText = response.data.board;
+					document.getElementById('deletebutton').style.visibility = 'visible';
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  alert(error.response.data);
+                  location.href = "/";
+                });
+        }
+    </script>
+</body>
+</html>

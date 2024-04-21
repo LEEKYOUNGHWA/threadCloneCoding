@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thread</title>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header>
+		<div id='header' onclick="goHome();">@</div>
+	</header>
+	<div id='boards'>
+		<div id='myinfo' onclick="logout();"></div>
+	</div>
+	
+	<div id="footer">
+		<div id="footercontent">
+			<img th:src="@{/images/home.png}" onclick="goHome();"></img>
+			<img th:src="@{/images/write.png}" onclick="goWrite();"></img>
+			<img th:src="@{/images/mypage.png}" onclick="goMypage();"></img>
+		</div>
+	</div>
+    
+    <!--<a href="/swagger-ui/index.html">swagger-ui 페이지 이동</a>
+    <a href="/h2-console">h2console 페이지 이동</a>-->
+    
+    <script>
+		window.onload = () => {
+			getboards();
+			myinfo();
+		}
+        //게시글 쓰기 페이지로 이동
+        const goHome = () => {
+            location.href = "/";
+        }
+        //게시글 수정 페이지로 이동
+        const goWrite = () => {
+            location.href = "/write";
+        }
+        const goMypage = () => {
+            location.href = "/myPage";
+        }
+        const getboards = () => {
+            axios.post('http://localhost:8787/board/my')
+                .then(function(response) {
+                  response.data.forEach((data,idx) => {
+					  drawBoards(data.no, data.userid, data.board);
+				  });
+                })
+                .catch(function(error) {
+				  alert(error.data.message);
+                  console.log(error.data.message);
+                });
+        }
+        const drawBoards = (no, userid, board) => {
+			let divBoardwrapper = document.createElement("div");
+			divBoardwrapper.setAttribute("class","board");
+			let divuserid = document.createElement("div");
+			divuserid.setAttribute("class","id");
+			divuserid.innerText = userid;
+			let divboard = document.createElement("div");
+			divboard.setAttribute("class","content");
+			divboard.setAttribute("onclick","editable(" + no + ",'"+ userid + "')");
+			divboard.innerText = board;
+			divBoardwrapper.append(divuserid);
+			divBoardwrapper.append(divboard);
+			document.getElementById("boards").append(divBoardwrapper);
+		}
+		const editable = (no, userid) => {
+			if (!userid == document.getElementById('myinfo').innerText) return false;
+            if (confirm("edit?")) {
+				location.href = "/write/" + no;
+			}
+        }
+        const myinfo = () => {
+            axios.post('http://localhost:8787/user/myname')
+                .then(function(response) {
+					console.log("res");
+					console.log(response.data);
+					document.getElementById("myinfo").innerHTML=response.data + "님 마이페이지.      로그아웃";
+                })
+                .catch(function(error) {
+					alert(error.response.data.message);
+                 	console.log(error);
+                 	location.href = "/";
+                });
+        }
+        const logout = () => {
+            axios.post('http://localhost:8787/logout')
+                .then(function(response) {
+					alert("logout success");
+					location.href = "/";
+                })
+                .catch(function(error) {
+				  console.log("err");
+                  console.log(error);
+                });
+        }
+    </script>
+</body>
+</html>

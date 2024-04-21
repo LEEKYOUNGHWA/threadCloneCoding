@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thread</title>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header>
+		<div id='header' onclick="goHome();">@</div>
+	</header>
+	<div id='boards'>
+		<div id='boardno' th:text="__${boardno}__" style="display:none;"></div>
+		<div id="boardcontent" name="textarea"></div>
+		<div id='alignright'>
+			<button id="editbutton" onclick="doedit()">edit</button>
+		</div>
+	
+	<div id='replys'></div></div>
+	<div id="replyfooter">
+		<div id="footercontent">
+			<div>
+			<textarea id="replytextarea" name="textarea" rows="1" cols="50" maxlength="100" placeholder="댓글1자이상입력하세요"></textarea> <button id="replybutton" onclick="dopost()">댓글작성</button>
+			</div>
+			<img th:src="@{/images/home.png}" onclick="goHome();"></img>
+			<img th:src="@{/images/write.png}" onclick="goWrite();"></img>
+			<img th:src="@{/images/mypage.png}" onclick="goMypage();"></img>
+		</div>
+	</div>
+    
+    <script>
+		var myinfoid = '';
+		window.onload = () => {
+			document.getElementById('replybutton').disabled = true;
+			loadedit();
+			loadreply();
+			
+			document.getElementById('replytextarea').addEventListener('keyup', function (e){
+    			console.log(document.getElementById('replytextarea').value);
+    			var textlen = document.getElementById('replytextarea').value.length;
+    			if (textlen > 0) {
+					document.getElementById('replybutton').disabled = false;
+				} else {
+					document.getElementById('replybutton').disabled = true;
+				}
+			}, false);
+		}
+        //게시글 쓰기 페이지로 이동
+        const goHome = () => {
+            location.href = "/";
+        }
+        //게시글 수정 페이지로 이동
+        const goWrite = () => {
+            location.href = "/write";
+        }
+        const goMypage = () => {
+            location.href = "/myPage";
+        }
+        const doedit = () => {
+			location.href = "/write/" + document.getElementById('boardno').innerText;
+        }
+        const loadedit = async () => {
+			
+			try{
+				const res = await axios.post('http://localhost:8787/user/myname');
+				console.log(res.data);
+				myinfoid=res.data;
+            } catch (error) {
+				alert(error.response.data.message);
+                console.log(error);
+			};
+
+			var boardno = document.getElementById('boardno').innerText;
+			if(!boardno) return false;
+			var board = {no : boardno};
+            await axios.get('http://localhost:8787/board/board',
+            {
+				params: {board : boardno},
+				headers:{'Content-Type' : 'application/json'}
+				})
+                .then(function(response) {
+					console.log("loadedit");
+					document.getElementById('boardcontent').innerText = response.data.board;
+					if (response.data.userid == myinfoid){
+						document.getElementById('editbutton').disabled = false;
+					}
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  alert(error.response);
+                  location.href = "/";
+                });
+        }
+        
+        
+        
+        const loadreply = () => {
+			var boardno = document.getElementById('boardno').innerText;
+			if(!boardno) return false;
+			var board = {no : boardno};
+            axios.get('http://localhost:8787/reply/load',
+            	{
+					params: {board : boardno},
+					headers:{'Content-Type' : 'application/json'}
+				})
+                .then(function(response) {
+					console.log("loadedit");
+					console.log(response.data);
+                  	response.data.forEach((data,idx) => {
+					  console.log(data);
+					  drawBoards(data.replyno, data.userid, data.reply);   
+				  });
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  alert(error.response);
+                });
+        }
+        const drawBoards = (no, userid, board) => {
+			let divBoardwrapper = document.createElement("div");
+			divBoardwrapper.setAttribute("class","board");
+			let divuserid = document.createElement("a");
+			divuserid.setAttribute("class","id");
+			divuserid.innerText = userid;
+			let divboard = document.createElement("a");
+			divboard.setAttribute("class","content");
+			divboard.setAttribute("onclick","editable(" + no + ",'"+ userid + "')");
+			divboard.innerText = board;
+			divBoardwrapper.append(divuserid);
+			divBoardwrapper.append(divboard);
+			document.getElementById("replys").append(divBoardwrapper);
+		}
+		
+		const editable = (no, userid) => {
+		    console.log(myinfoid + userid);
+			if (myinfoid == userid ){
+				if ( confirm("delete?")) {
+					var reply = {replyno : no};
+					axios.post('http://localhost:8787/reply/delete',
+		            JSON.stringify(reply),
+		            {headers:{'Content-Type' : 'application/json'}}
+	            	).then(function(response) {
+						console.log(response);
+						alert("삭제완료");
+						location.reload();
+	                })
+	                .catch(function(error) {
+	                  console.log(error);
+	                  alert(error.response.data.message);
+	                });
+                }
+			}
+			//location.href = "/reply/" + no;
+        }
+        
+        const dopost = () => {
+			console.log("dopost");
+			var boardno = document.getElementById('boardno').innerText;
+			var boardtext = document.getElementById('replytextarea').value;
+            var reply = {boardno : boardno , reply : boardtext};
+            axios.post('http://localhost:8787/reply',
+	            JSON.stringify(reply),
+	            {headers:{'Content-Type' : 'application/json'}}
+            	).then(function(response) {
+					console.log(response);
+					alert("작성완료");
+					location.reload();
+				// location.href = "/myPage";
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  alert(error.response.data.message);
+                });
+        }
+    </script>
+</body>
+</html>

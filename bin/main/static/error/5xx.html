@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>오류 페이지</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+비정상적 접근
+<script>
+	window.onload = () => {
+		setTimeout(function(){
+		   axios.post('http://localhost:8787/logout')
+                .then(function(response) {
+					alert("logout success");
+					location.href = "/";
+                })
+                .catch(function(error) {
+				  console.log("err");
+                  console.log(error);
+                });
+		}, 2000);
+
+	}
+</script>
+</body>
+</html>

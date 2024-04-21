@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thread</title>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header>
+		<div id='header' onclick="goHome();">@</div>
+	</header>
+	<div id='boards'>
+        <div>
+            <div>아이디</div>
+            <input id="username" type="text" name="id"/>
+        </div>
+        <div>
+            <div>비밀번호</div>
+            <input id="password" type="password" name="password"/>
+        </div>
+        <div id='buttons'>
+	        <button onclick="dologin()">로그인</button>
+	        <button onclick="dojoin()">회원가입</button>
+        </div>
+    </div>
+	<div id="footer">
+		<div id="footercontent">
+			<img th:src="@{/images/home.png}" onclick="goHome();"></img>
+			<img th:src="@{/images/write.png}" onclick="goWrite();"></img>
+			<img th:src="@{/images/mypage.png}" onclick="goMypage();"></img>
+		</div>
+	</div>
+    
+    <!--<a href="/swagger-ui/index.html">swagger-ui 페이지 이동</a>
+    <a href="/h2-console">h2console 페이지 이동</a>-->
+    
+    <script>
+		window.onload = () => {
+			// getboards();
+		}
+        //게시글 쓰기 페이지로 이동
+        const goHome = () => {
+            location.href = "/";
+        }
+        //게시글 수정 페이지로 이동
+        const goWrite = () => {
+            location.href = "/write";
+        }
+        const goMypage = () => {
+            location.href = "/myPage";
+        }
+        const getboards = () => {
+            axios.post('http://localhost:8787/user/myname',null,{})
+                .then(function(response) {
+                  console.log(response);
+                })
+                .catch(function(error) {
+                  console.log("error" + error);
+                });
+        }
+        const dologin = () => {
+			var username = document.getElementById("username").value; 
+            var password = document.getElementById("password").value;
+                
+            var user = {userid : username, password : password};
+            axios.post('http://localhost:8787/user/login',
+	            JSON.stringify(user),
+	            {headers:{'Content-Type' : 'application/json'}}
+            	).then(function(response) {
+					console.log(response);
+					alert("로그인성공!");
+					location.href = "/";
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  alert(error.response.data.message);
+                });
+        }
+        const dojoin = () => {
+			var username = document.getElementById("username").value; 
+            var password = document.getElementById("password").value;
+            var user = {userid : username, password : password};
+            axios.post('http://localhost:8787/user/join',
+	            JSON.stringify(user),
+	            {headers:{'Content-Type' : 'application/json'}}
+            	).then(function(response) {
+					console.log(response);
+					alert("가입완료");
+					location.href = "/";
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  alert(error.response.data.message);
+                });
+        }
+    </script>
+</body>
+</html>
