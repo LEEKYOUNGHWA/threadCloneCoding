@@ -27,36 +27,40 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class BoardService{
-	
+
 	@Autowired
 	BoardRepository repo;
-	
+
 	public List findAll() {
 		return (List) repo.findAll();
 	}
-	
+
 	public List<Board> findAllByOrderByNoDesc(Pageable pageable) {
 		return repo.findAllByOrderByNoDesc(pageable);
 	}
-	
+
 	public List<Board> findByUserid(Authentication auth) {
 		List<Board> myboards = repo.findByUseridOrderByNoDesc(auth.getName());
 		return myboards;
 	}
 
 	public void insertBoard(Board board, Authentication auth) {
-		
+
+		if(board.getNo()!=null && repo.findByUseridAndNo(auth.getName(), board.getNo()).isEmpty()) {
+			throw new IllegalArgumentException("권한 없음");
+		}
+
 		Board boardd = new Board(board.getNo(), auth.getName(), board.getBoard());
 		repo.save(boardd);
 	}
-	
+
 	@Transactional
 	public void deleteBoard(Board board, Authentication auth) {
 		repo.deleteByUseridAndNo(auth.getName(), board.getNo());
 	}
 
 	public Board findByUseridAndNo(Board board, Authentication auth) {
-		
+
 		Optional<Board> optionalBoard = repo.findByUseridAndNo(auth.getName(), board.getNo());
 		if (optionalBoard.isEmpty()){
             throw new IllegalArgumentException("권한 없음");
