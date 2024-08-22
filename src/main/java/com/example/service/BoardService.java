@@ -63,7 +63,7 @@ public class BoardService{
 
 		Optional<Board> optionalBoard = repo.findByUseridAndNo(auth.getName(), board.getNo());
 		if (optionalBoard.isEmpty()){
-            throw new IllegalArgumentException("권한 없음");
+            // throw new IllegalArgumentException("권한 없음");
         }
 
 		return optionalBoard.get();
